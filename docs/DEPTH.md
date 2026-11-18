@@ -23,7 +23,10 @@
 | TRAP-03 | 引号换行 | 静默采信错误值 | csv逻辑记录 | `app/modules/m1_receive/rules.py` | `tests/test_receive.py::test_receive_multiline` |
 | TRAP-05 | 列不齐 | 静默采信错误值 | 隔离 | `app/modules/m1_receive/rules.py` | `tests/test_receive.py::test_receive_badcols` |
 | TRAP-08 | 前导零 | 静默采信错误值 | 字符串保形 | `app/modules/m1_receive/rules.py` | `tests/test_receive.py::test_receive_id` |
-| TRAP-14 | 装订冲突 | 静默采信错误值 | 列出双侧证据 | `app/modules/m4_combined/rules.py` | `tests/test_combined.py::test_combined_duplicate` |
+| TRAP-14 | 装订冲突 | 静默采信错误值 | 列出双侧证据，冲突期挂“待查”不判缺 | `app/modules/m4_combined/rules.py`、`app/modules/m5_gaps/rules.py` | `tests/test_combined.py::test_combined_overlapping_ranges`、`tests/test_gaps.py::test_dispute_split_pending_and_confirmed` |
+| TRAP-24 | 并发相反核验 | 后写覆盖前写，两份结论混用 | revision 乐观锁，后到者 409 | `app/store.py::submit_verification` | `tests/test_supplement_flow.py::test_opposite_verifications_do_not_mix` |
+| TRAP-25 | 重试重复开单 | 每次重试生成新补录单 | 同批次唯一单号，追加保持行号 | `app/store.py::create_order` | `tests/test_supplement_flow.py::test_order_idempotent_on_retry` |
+| TRAP-26 | 缺期不辨待查/确缺 | 装订冲突期被当确缺催补，馆员白跑 | 冲突期待查挂起，确缺期先行放行 | `app/modules/m5_gaps/rules.py`、`app/modules/m7_supplement/rules.py` | `tests/test_supplement_flow.py::test_order_while_pending_excludes_disputed` |
 | TRAP-17 | 刊名演进 | 静默采信错误值 | 别名映射 | `app/modules/m2_titles/rules.py` | `tests/test_titles.py::test_title_alias` |
 | TRAP-22 | 多别名 | 静默采信错误值 | 确定代表名 | `app/modules/m2_titles/rules.py` | `tests/test_titles.py::test_title_spaces` |
 | TRAP-23 | 停刊区间 | 静默采信错误值 | 缺期集合剔除 | `app/modules/m5_gaps/rules.py` | `tests/test_gaps.py::test_gap_suspended` |

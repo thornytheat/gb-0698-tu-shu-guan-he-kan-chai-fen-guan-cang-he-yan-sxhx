@@ -14,7 +14,7 @@ docker compose exec -T app pytest -q
 docker compose config --quiet
 ```
 
-浏览器访问 http://localhost:18212 。默认载入仓内样例。工具条可选择CSV文件运行；样例文件位于 `sample_data/instrument.csv`。重复执行同一内容复用同一批次。
+浏览器访问 http://localhost:18212 。默认载入仓内样例。工具条可选择CSV文件运行；样例文件位于 `sample_data/instrument.csv`，装订冲突待查场景见 `sample_data/binding-dispute.csv`。重复执行同一内容复用同一批次。
 
 ## 模块
 
@@ -28,7 +28,9 @@ docker compose config --quiet
 
 ## 输入与输出
 
-CSV可用UTF-8或GB18030；上传保留字符串编号和物理行号。POST `/api/run` 接收 `text` 字段。`GET /api/runs` 查询历史，`POST /api/review` 接收 id、revision、decision。导出按钮下载唯一证据CSV，含运行摘要与隔离记录。
+CSV可用UTF-8或GB18030；上传保留字符串编号和物理行号。POST `/api/run` 接收 `text` 字段。`GET /api/runs` 查询历史，`POST /api/review` 接收 id、revision、decision。导出按钮下载唯一证据CSV，含运行摘要、核验结论、补录单与隔离记录。
+
+装订冲突期挂“待查”并保留双侧装订证据，不与“确缺”混报；实物核验结论走 revision 乐观锁，并发相反结论后到者 409。补录单只放行确缺期，同批次重试复用同一单号、不重复开单。复核视图 `GET /api/supplement/{id}` 逐期给出待查/可开单原因，接口定义见 `docs/API.md`。
 
 SQLite命名卷保存运行记录。重建演示数据可更换卷名后重启。无需外部网络数据。规则定义见 `docs/DATA-DICTIONARY.md`；边界和测试对应关系见 `docs/DEPTH.md`。
 
